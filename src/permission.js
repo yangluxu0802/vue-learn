@@ -10,9 +10,14 @@ const whiteList = ['/login']
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
-  const hastoken = ''
-  if (hastoken) {
+  const hasToken = ''
+  if (hasToken) {
+    if (to.path === '/login') {
+      next({ path: '/' })
+      NProgress.done()
+    } else {
 
+    }
   } else {
     if (whiteList.indexOf(to.path) !== -1) {
       // in the free login whitelist, go directly
