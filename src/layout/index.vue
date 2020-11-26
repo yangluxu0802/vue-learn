@@ -15,8 +15,8 @@
 </template>
 
 <script>
-import NavMenu from '@/components/NavMenu'
-import Header from '@/components/Header'
+import NavMenu from '@/layout/components/NavMenu'
+import Header from '@/layout/components/Header'
 
 export default {
   name: 'Layout',
