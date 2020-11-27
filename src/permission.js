@@ -1,6 +1,6 @@
 import router from './router'
-// import store from './store'
-// import { Message } from 'element-ui'
+import store from './store'
+import { Message } from 'element-ui'
 import NProgress from 'nprogress' // 引入nprogress插件
 import { getToken } from '@/utils/auth'
 import 'nprogress/nprogress.css' // 这个nprogress样式必须引入
@@ -9,7 +9,7 @@ NProgress.configure({ showSpinner: false })
 
 const whiteList = ['/login']
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   NProgress.start()
   const hasToken = getToken()
   if (hasToken) {
@@ -17,7 +17,22 @@ router.beforeEach((to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
-
+      const hasGetUserInfo = store.getters.name
+      if (hasGetUserInfo) {
+        next()
+      } else {
+        try {
+          // get user info
+          await store.dispatch('user/getInfo')
+          next()
+        } catch (error) {
+          // remove token and go to login page to re-login
+          await store.dispatch('user/resetToken')
+          Message.error(error || 'Has Error')
+          next(`/login?redirect=${to.path}`)
+          NProgress.done()
+        }
+      }
     }
   } else {
     if (whiteList.indexOf(to.path) !== -1) {
